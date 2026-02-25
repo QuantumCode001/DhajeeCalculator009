@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Your Dhajee Score - RANJIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Bebas+Neue&family=Caveat:wght@600;700&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:      #05070c;
+  --surface: rgba(255,255,255,0.06);
+  --border:  rgba(255,255,255,0.14);
+  --text:    #f5f7ff;
+  --muted:   rgba(245,247,255,0.55);
+  --bihar-a: #ff3d00;
+  --bihar-b: #ffb300;
+  --bengal-a:#00ffd0;
+  --bengal-b:#2962ff;
+  --pop:     #ff2da0;
+}
+
+body.vibes {
+  --bg:      #fff5e6;
+  --surface: rgba(255,255,255,0.9);
+  --border:  rgba(0,0,0,0.12);
+  --text:    #140700;
+  --muted:   rgba(20,7,0,0.6);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .5s,color .5s;
+}
+
+/* ── BACKGROUND ── */
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen;animation:blobFloat 20s ease-in-out infinite alternate;}
+.b1{width:700px;height:700px;background:radial-gradient(#ff5722,transparent 70%);top:-200px;left:-200px;opacity:.22;}
+.b2{width:600px;height:600px;background:radial-gradient(#2979ff,transparent 70%);bottom:-150px;right:-150px;opacity:.2;}
+.b3{width:450px;height:450px;background:radial-gradient(#00e5c3,transparent 70%);top:30%;left:30%;opacity:.15;}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1);}100%{transform:translate(50px,70px) scale(1.1);}}
+
+body.vibes .blob{mix-blend-mode:multiply;opacity:.1!important;}
+
+/* ── UI COMPONENTS ── */
+.brand-logo {
+  position:fixed; top:24px; left:24px; z-index:999;
+  padding:8px 18px; border-radius:14px;
+  background:var(--surface); border:1px solid var(--border);
+  backdrop-filter:blur(14px); font-family:'Bebas Neue',sans-serif; letter-spacing:2px;
+}
+
+.theme-toggle { position:fixed; top:24px; right:24px; z-index:999; cursor:pointer; }
+.toggle-pill { display:flex; padding:5px; background:var(--surface); border-radius:999px; border:1px solid var(--border); backdrop-filter:blur(20px); }
+.toggle-option { width:35px; height:35px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:.3s; }
+.toggle-option.active { background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b)); color:white; box-shadow:0 0 20px rgba(255,87,34,.5); }
+
+/* ── MAIN CONTENT ── */
+.main-container {
+  position:relative; z-index:10;
+  max-width:800px; margin:100px auto 50px; padding:20px;
+}
+
+/* ── HERO SECTION ── */
+.result-hero {
+  text-align: center;
+  margin-bottom: 50px;
+  animation: fadeUp 0.8s ease-out;
+}
+
+.congrats-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b));
+  color: white;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 3px;
+  padding: 8px 24px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(255,87,34,.4);
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.score-display {
+  font-family: 'Yatra One', cursive;
+  font-size: clamp(60px, 12vw, 120px);
+  line-height: 1;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--bihar-b), var(--bengal-a), var(--bengal-b));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 8px 24px rgba(255,179,0,.3));
+}
+
+.score-emoji {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 10px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.score-text {
+  font-family: 'Caveat', cursive;
+  font-size: 28px;
+  color: var(--pop);
+  margin-bottom: 10px;
+}
+
+.score-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ── OFFERINGS SECTION ── */
+.offerings-section {
+  margin-top: 60px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+
+.offerings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.offer-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 24px;
+  backdrop-filter: blur(20px);
+  transition: all .4s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
+  animation: fadeUp 0.6s ease-out backwards;
+}
+
+.offer-card:nth-child(1) { animation-delay: 0.1s; }
+.offer-card:nth-child(2) { animation-delay: 0.2s; }
+.offer-card:nth-child(3) { animation-delay: 0.3s; }
+.offer-card:nth-child(4) { animation-delay: 0.4s; }
+
+.offer-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,87,34,.15), transparent 70%);
+  opacity: 0;
+  transition: opacity .4s;
+}
+
+.offer-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--bihar-b);
+  box-shadow: 0 20px 50px rgba(255,87,34,.25);
+}
+
+.offer-card:hover::before {
+  opacity: 1;
+}
+
+.offer-icon {
+  font-size: 50px;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+}
+
+.offer-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.offer-amount {
+  font-family: 'Yatra One', cursive;
+  font-size: 36px;
+  background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+}
+
+.offer-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.offer-badge {
+  display: inline-block;
+  background: rgba(255,87,34,.15);
+  color: var(--bihar-b);
+  border: 1px solid rgba(255,87,34,.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ── SUMMARY CARD ── */
+.summary-card {
+  background: var(--surface);
+  border: 2px solid var(--bihar-b);
+  border-radius: 24px;
+  padding: 32px;
+  margin-top: 40px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(255,87,34,.3);
+  animation: fadeUp 0.6s 0.5s ease-out backwards;
+}
+
+.summary-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--bengal-a), var(--bengal-b));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.total-package {
+  font-family: 'Yatra One', cursive;
+  font-size: 56px;
+  color: var(--text);
+  margin-bottom: 16px;
+  text-shadow: 0 4px 20px rgba(255,179,0,.3);
+}
+
+.package-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.package-item {
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ── ACTION BUTTONS ── */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 50px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.btn-action {
+  padding: 16px 40px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(0.34,1.56,0.64,1);
+  text-decoration: none;
+  display: inline-block;
+  width: 220px;
+  text-align: center;
+  white-space: nowrap;
+
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b));
+  color: white;
+  box-shadow: 0 10px 30px rgba(255,87,34,.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 16px 40px rgba(255,87,34,.5);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--bihar-b);
+  background: rgba(255,87,34,.1);
+  transform: translateY(-2px);
+}
+
+/* ── FLOATING BACK BUTTON ── */
+.back-float {
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  z-index:999;
+  padding:12px 24px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  font-family:'Sora',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--text);
+  background:var(--surface);
+  backdrop-filter:blur(12px);
+  cursor:pointer;
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-float:hover {
+  transform:translateY(-4px) scale(1.05);
+  border-color:var(--bihar-b);
+  box-shadow:0 18px 45px rgba(255,87,34,.35);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .offerings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-action {
+    width: 100%;
+  }
+}
+
+body.vibes .back-float {
+  background:rgba(255,255,255,0.85);
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+</style>
+</head>
+<body>
+
+<div class="brand-logo"><span style="color:var(--bihar-b)">RANJIT</span></div>
+
+<div class="bg-wrap">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="theme-toggle" onclick="toggleTheme()">
+  <div class="toggle-pill">
+    <div class="toggle-option active" id="darkOpt">🌙</div>
+    <div class="toggle-option" id="lightOpt">🌞</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <!-- HERO RESULT -->
+  <div class="result-hero">
+    <div class="congrats-badge">🎉 congratulation! 🎉</div>
+    <span class="score-emoji" id="scoreEmoji">🔥</span>
+    <div class="score-display" id="scoreDisplay">85/100</div>
+    
+  </div>
+
+  <!-- OFFERINGS SECTION -->
+  <div class="offerings-section">
+    <h2 class="section-title">Your Market Value</h2>
+    <p class="section-subtitle">What families are willing to offer you 💰</p>
+
+    <div class="offerings-grid" id="offeringsGrid">
+      <!-- Offerings will be inserted here by JavaScript -->
+    </div>
+
+    <!-- TOTAL SUMMARY -->
+    <div class="summary-card">
+      <h3 class="summary-title">Total Package Worth</h3>
+      <div class="total-package" id="totalPackage">₹45 Lakhs+</div>
+      <div class="package-items" id="packageItems">
+        <!-- Package items will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-buttons">
+    <a href="#" class="btn-action btn-primary" onclick="shareResult()">Share Result</a>
+    <a href="index.html" class="btn-action btn-secondary">Take Again</a>
+  </div>
+</div>
+
+
+<script>
+// Get selections
+function getSelections(){
+  const stored=localStorage.getItem('dhajeeSelections');
+  if(stored) return JSON.parse(stored);
+  return [0,0,0,0,0];
+}
+const selections=getSelections();
+
+// Score calculation
+function calculateScore(){
+  let score=0;
+  const property=[30,25,25,20,10];
+  const father=[25,20,15,15];
+  const status=[25,20,15,5];
+  const looks=[15,10,12,8];
+  const family=[10,8,12,6];
+
+  score+=property[selections[0]]||10;
+  score+=father[selections[1]]||15;
+  score+=status[selections[2]]||15;
+  score+=looks[selections[3]]||10;
+  score+=family[selections[4]]||8;
+
+  return score;
+}
+
+// 🔥 YOUR CUSTOM TIERS
+function calculatePackageAmount(score){
+  if(score>=90) return 45;
+  if(score>=75) return 23;
+  if(score>=55) return 10;
+  if(score>=35) return 3;
+  if(score>=15) return 2;
+  return 1;
+}
+
+// Display
+function displayResults(){
+  const score=calculateScore();
+
+  // money
+  const amount=calculatePackageAmount(score);
+  document.getElementById('totalPackage').textContent=`₹${amount} Lakhs+`;
+
+  // score
+  document.getElementById('scoreDisplay').textContent=score+'/100';
+
+  // emoji + text
+  let emoji='😊';
+  let text='Good Match!';
+
+  if(score>=85){emoji='🔥';text='Premium Material!';}
+  else if(score>=70){emoji='⭐';text='Excellent Catch!';}
+  else if(score>=55){emoji='👍';text='Good Potential!';}
+  else if(score>=40){emoji='💪';text='Keep Growing!';}
+  else{text='Future Star!';emoji='🌱';}
+
+  document.getElementById('scoreEmoji').textContent=emoji;
+  document.getElementById('scoreText').textContent=text;
+}
+
+// Share
+function shareResult(){
+  const score=calculateScore();
+  const text=`I scored ${score}/100 on the Dhajee Calculator! 🔥`;
+
+  if(navigator.share){
+    navigator.share({title:'My Dhajee Score',text,url:window.location.href});
+  }else{
+    navigator.clipboard.writeText(text);
+    alert('✅ Result copied!');
+  }
+}
+
+// Init
+displayResults();
+// Theme toggle
+function toggleTheme() {
+  const v = document.body.classList.toggle('vibes');
+  document.getElementById('darkOpt').classList.toggle('active', !v);
+  document.getElementById('lightOpt').classList.toggle('active', v);
+  localStorage.setItem('dhTheme', v ? 'vibes' : 'dark');
+}
+</script>
+
+</body>
+</html>

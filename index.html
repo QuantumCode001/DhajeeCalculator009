@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RANJIT – Dhajee Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Bebas+Neue&family=Caveat:wght@600;700&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:      #05070c;
+  --surface: rgba(255,255,255,0.06);
+  --border:  rgba(255,255,255,0.14);
+  --text:    #f5f7ff;
+  --muted:   rgba(245,247,255,0.55);
+
+  /* 🔥 more bold gradients */
+  --bihar-a: #ff3d00;
+  --bihar-b: #ffb300;
+  --bengal-a:#00ffd0;
+  --bengal-b:#2962ff;
+
+  --pop:     #ff2da0;
+}
+body.vibes {
+  --bg:      #fff5e6;
+  --surface: rgba(255,255,255,0.9);
+  --border:  rgba(0,0,0,0.12);
+  --text:    #140700;
+  --muted:   rgba(20,7,0,0.6);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .5s,color .5s;
+}
+
+/* ── BG BLOBS ── */
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen;animation:blobFloat 20s ease-in-out infinite alternate;}
+.b1{width:700px;height:700px;background:radial-gradient(#ff5722,transparent 70%);top:-200px;left:-200px;opacity:.22;animation-delay:0s;}
+.b2{width:600px;height:600px;background:radial-gradient(#2979ff,transparent 70%);bottom:-150px;right:-150px;opacity:.2;animation-delay:-7s;}
+.b3{width:450px;height:450px;background:radial-gradient(#00e5c3,transparent 70%);top:30%;left:30%;opacity:.15;animation-delay:-14s;}
+.b4{width:300px;height:300px;background:radial-gradient(#ff3cac,transparent 70%);top:10%;right:10%;opacity:.18;animation-delay:-4s;}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1) rotate(0deg);}100%{transform:translate(50px,70px) scale(1.15) rotate(20deg);}}
+body.vibes .blob{mix-blend-mode:multiply;opacity:.1!important;}
+
+.scanlines{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.012) 3px,rgba(255,255,255,.012) 4px);
+}
+
+/* ── PARTICLES ── */
+.particles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
+.p{position:absolute;opacity:0;animation:pFloat linear infinite;user-select:none;filter:drop-shadow(0 0 8px currentColor);}
+@keyframes pFloat{0%{transform:translateY(105vh) rotate(0deg) scale(0.8);opacity:0;}5%{opacity:1;}95%{opacity:.5;}100%{transform:translateY(-10vh) rotate(720deg) scale(1.2);opacity:0;}}
+
+/* ── THEME TOGGLE FLOATING ── */
+.theme-toggle{
+  position:fixed;top:24px;right:24px;z-index:999;
+  cursor:pointer;user-select:none;
+}
+.toggle-pill{
+  display:flex;align-items:center;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:999px;padding:5px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
+  transition:all .4s;
+}
+body.vibes .toggle-pill{background:rgba(255,255,255,.7);border-color:rgba(0,0,0,.1);box-shadow:0 8px 32px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.9);}
+.toggle-option{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  transition:all .35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.toggle-option.active{
+  background:linear-gradient(135deg,#ff5722,#ffc107);
+  box-shadow:0 0 20px rgba(255,87,34,.5),0 4px 12px rgba(0,0,0,.3);
+  transform:scale(1.12);
+}
+body.vibes .toggle-option.active{background:linear-gradient(135deg,#ffd700,#ff9500);box-shadow:0 0 20px rgba(255,200,0,.6),0 4px 12px rgba(0,0,0,.2);}
+.toggle-label{
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:rgba(0,0,0,.85);color:#fff;
+  font-family:'Caveat',cursive;font-size:14px;
+  padding:5px 12px;border-radius:8px;white-space:nowrap;
+  opacity:0;transform:translateY(-4px);transition:all .2s;pointer-events:none;
+}
+.theme-toggle:hover .toggle-label{opacity:1;transform:translateY(0);}
+body.vibes .toggle-label{background:rgba(255,255,255,.92);color:#333;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:10;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 24px 110px;text-align:center;
+}
+.eyebrow{
+  font-family:'Caveat',cursive;font-size:22px;font-weight:700;
+  color:var(--pop);margin-bottom:14px;
+  animation:fadeUp .6s .05s both;
+}
+.eyebrow::before{content:'👀 ';}.eyebrow::after{content:' 😂';}
+
+.sticker{
+  display:inline-block;
+  background:linear-gradient(135deg,#ff5722,#ffc107);
+  color:#fff;font-family:'Bebas Neue',sans-serif;
+  font-size:11px;letter-spacing:3px;padding:5px 16px;
+  border-radius:4px;margin-bottom:30px;
+  animation:fadeUp .6s .15s both,wiggle 3s 2s ease-in-out infinite;
+  box-shadow:0 4px 20px rgba(255,87,34,.4);
+  transform-origin:center;position:relative;
+}
+.sticker::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#ffc107;border-bottom:0;}
+@keyframes wiggle{0%,100%{transform:rotate(-1.2deg);}50%{transform:rotate(1.5deg);}}
+
+.hero-title{
+  font-family:'Yatra One',cursive;
+  font-size:clamp(56px,13vw,130px);
+  line-height:.9;margin-bottom:16px;
+  animation:fadeUp .6s .25s both;
+}
+.w1{
+  display:block;
+  background:linear-gradient(135deg,#ff3d00 0%,#ffb300 60%,#ff2da0 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 6px 20px rgba(255,61,0,.35));
+}
+
+.w2{
+  display:block;
+  background:linear-gradient(135deg,#2962ff,#00ffd0);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 6px 20px rgba(41,98,255,.35));
+}
+.hero-sub{font-size:13px;color:var(--muted);margin-bottom:10px;animation:fadeUp .6s .38s both;font-weight:300;letter-spacing:.5px;}
+.hero-funny{
+  font-family:'Caveat',cursive;font-size:18px;color:var(--muted);
+  margin-bottom:60px;animation:fadeUp .6s .45s both;
+}
+.hero-funny em{color:var(--bihar-b);font-style:normal;}
+
+/* ── CARDS ── */
+.cards{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  width:100%;max-width:600px;
+  animation:fadeUp .6s .55s both;
+}
+@media(max-width:500px){.cards{grid-template-columns:1fr;max-width:320px;}}
+
+.card{
+  position:relative;padding:40px 24px 32px;border-radius:28px;
+  border:1px solid var(--border);background:var(--surface);
+  backdrop-filter:blur(20px);cursor:pointer;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;
+  text-decoration:none;color:inherit;
+  transition:transform .4s cubic-bezier(0.34,1.56,0.64,1),box-shadow .4s,border-color .4s;
+}
+.card:hover{transform:translateY(-14px) rotate(-1.5deg) scale(1.04);}
+.card-bengal:hover{transform:translateY(-14px) rotate(1.5deg) scale(1.04);}
+.card::before{content:'';position:absolute;inset:0;border-radius:28px;opacity:0;transition:opacity .4s;}
+.card-bihar::before{background:radial-gradient(ellipse at 50% 0%,rgba(255,87,34,.25),transparent 70%);}
+.card-bengal::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,229,195,.2),transparent 70%);}
+.card:hover::before{opacity:1;}
+.card-bihar:hover{border-color:rgba(255,87,34,.6);box-shadow:0 24px 70px rgba(255,87,34,.25),0 0 0 1px rgba(255,87,34,.3);}
+.card-bengal:hover{border-color:rgba(0,229,195,.6);box-shadow:0 24px 70px rgba(41,121,255,.2),0 0 0 1px rgba(0,229,195,.3);}
+
+
+.card-doodle{position:absolute;font-size:16px;opacity:.25;pointer-events:none;animation:spin 8s linear infinite;}
+.card-doodle.tl{top:12px;left:14px;}.card-doodle.br{bottom:12px;right:14px;animation-direction:reverse;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.card-icon{font-size:60px;line-height:1;transition:transform .4s cubic-bezier(0.34,1.8,0.64,1);filter:drop-shadow(0 4px 20px rgba(0,0,0,.3));}
+.card:hover .card-icon{transform:scale(1.3) translateY(-6px) rotate(8deg);}
+
+.card-tag{font-family:'Caveat',cursive;font-size:14px;padding:3px 12px;border-radius:999px;font-weight:700;}
+.card-bihar .card-tag{background:rgba(255,87,34,.15);color:#ff8a65;border:1px solid rgba(255,87,34,.25);}
+.card-bengal .card-tag{background:rgba(0,229,195,.12);color:#00e5c3;border:1px solid rgba(0,229,195,.25);}
+
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:4px;line-height:1;}
+.card-bihar .card-name{background:linear-gradient(135deg,#ff5722,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.card-bengal .card-name{background:linear-gradient(135deg,#00e5c3,#2979ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+.card-sub{font-size:11px;color:var(--muted);letter-spacing:.5px;}
+
+.card-btn{
+  margin-top:8px;padding:12px 28px;border-radius:999px;
+  font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  border:none;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+}
+.card-btn-inner{position:relative;z-index:1;}
+.card:hover .card-btn{transform:scale(1.06);}
+.card-bihar .card-btn{background:linear-gradient(135deg,#ff5722,#ffc107);color:#fff;box-shadow:0 4px 20px rgba(255,87,34,.35);}
+.card-bengal .card-btn{background:linear-gradient(135deg,#00e5c3,#2979ff);color:#fff;box-shadow:0 4px 20px rgba(0,229,195,.3);}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:14px;width:100%;max-width:600px;margin-top:52px;animation:fadeUp .6s .7s both;color:var(--muted);font-family:'Caveat',cursive;font-size:16px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+
+/* ── FOOTER ── */
+.footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);border-top:1px solid var(--border);
+  background:linear-gradient(0deg,rgba(7,9,15,.9),transparent);
+  backdrop-filter:blur(10px);
+}
+body.vibes .footer{background:linear-gradient(0deg,rgba(255,248,240,.92),transparent);}
+.fdot{width:4px;height:4px;border-radius:50%;background:#00e5c3;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:.5;}}
+
+/* ── ANIMS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+body.flash{animation:flashBg .35s ease;}
+@keyframes flashBg{0%{filter:brightness(1);}40%{filter:brightness(1.5);}100%{filter:brightness(1);}}
+
+/* ── BRAND LOGO ── */
+.brand-logo{
+  position:fixed;
+  top:24px;
+  left:24px;
+  z-index:999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.14);
+  backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:2px;
+  user-select:none;
+}
+
+/* light mode match */
+body.vibes .brand-logo{
+  background:rgba(255,255,255,0.85);
+  border-color:rgba(0,0,0,0.12);
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+.logo-icon{
+  font-size:20px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));
+}
+
+.logo-text{
+  font-size:20px;
+  background:linear-gradient(135deg,#ff5722,#ffc107);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ── FLOATING ABOUT BUTTON ── */
+.about-float{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:999;
+  text-decoration:none;
+  font-family:'Sora',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:12px 22px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,#ff5722,#ffc107);
+  box-shadow:
+    0 10px 30px rgba(255,87,34,.35),
+    0 2px 8px rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* hover premium lift */
+.about-float:hover{
+  transform:translateY(-4px) scale(1.06);
+  box-shadow:
+    0 18px 45px rgba(255,87,34,.45),
+    0 6px 16px rgba(0,0,0,.35);
+}
+
+/* light mode match */
+body.vibes .about-float{
+  background:linear-gradient(135deg,#ffd700,#ff9500);
+  color:#000;
+  box-shadow:
+    0 10px 30px rgba(255,170,0,.35),
+    0 2px 8px rgba(0,0,0,.15);
+}
+</style>
+</head>
+<body>
+<!-- ══ TOP LEFT LOGO ══ -->
+<div class="brand-logo">
+  <span class="logo-text">RANJIT</span>
+</div>
+<div class="bg-wrap">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="blob b3"></div><div class="blob b4"></div>
+</div>
+<div class="scanlines"></div>
+<div class="particles" id="particles"></div>
+ 
+
+<!-- ══ FLOATING THEME TOGGLE ══ -->
+<div class="theme-toggle" onclick="toggleTheme()">
+  <div class="toggle-pill">
+    <div class="toggle-option active" id="darkOpt">🌙</div>
+    <div class="toggle-option" id="lightOpt">🌞</div>
+  </div>
+  
+</div>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+
+  <div class="eyebrow">Best Dhajee Calculator Ever</div>
+
+  <div class="sticker">✦ biharis · Bengalis ✦</div>
+
+  <h1 class="hero-title">
+    <span class="w1">DHAJEE</span>
+    <span class="w2">CALCULATOR</span>
+  </h1>
+
+  <p class="hero-sub">"Bas check kar lo, shaadi mein kaam aayega!</p>
+  <p class="hero-funny">Don't worry yaar, it's totally free 😅 <em>वादा है!</em></p>
+
+  <!-- ── CARDS ── -->
+  <div class="cards">
+
+    <a href="biharform.html" class="card card-bihar">
+      <div class="card-doodle tl">✦</div>
+      <div class="card-doodle br">◆</div>
+      <div class="card-icon">🏯</div>
+      <div class="card-tag">बिहार</div>
+      <div class="card-name">Bihar</div>
+      <div class="card-sub">Click karo bhai!</div>
+      <button class="card-btn"><span class="card-btn-inner">Let's Go </span></button>
+    </a>
+
+    <a href="bengalform.html" class="card card-bengal">
+      <div class="card-doodle tl">✧</div>
+      <div class="card-doodle br">⬡</div>
+      <div class="card-icon">🐯</div>
+      <div class="card-tag">বাংলা</div>
+      <div class="card-name">Bengal</div>
+      <div class="card-sub">Click karo bhai!</div>
+      <button class="card-btn"><span class="card-btn-inner">Let's Go </span></button>
+    </a>
+
+  </div>
+
+  <div class="divider">✌️ other states are loading ✌️</div>
+
+</div>
+
+<!-- ══ FLOATING ABOUT BUTTON ══ -->
+<a href="about.html" class="about-float">About</a>
+
+<script>
+
+
+/* Theme */
+function toggleTheme(){
+  const v=document.body.classList.toggle('vibes');
+  document.getElementById('darkOpt').classList.toggle('active',!v);
+  document.getElementById('lightOpt').classList.toggle('active',v);
+  localStorage.setItem('dhTheme',v?'vibes':'dark');
+  document.body.classList.add('flash');
+  setTimeout(()=>document.body.classList.remove('flash'),350);
+}
+(function(){
+  if(localStorage.getItem('dhTheme')==='vibes'){
+    document.body.classList.add('vibes');
+    document.getElementById('darkOpt').classList.remove('active');
+    document.getElementById('lightOpt').classList.add('active');
+    
+  }
+})();
+</script>
+</body>
+</html>

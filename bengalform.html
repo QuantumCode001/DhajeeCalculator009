@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RANJIT – Dhajee Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Bebas+Neue&family=Caveat:wght@600;700&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:      #05070c;
+  --surface: rgba(255,255,255,0.06);
+  --border:  rgba(255,255,255,0.14);
+  --text:    #f5f7ff;
+  --muted:   rgba(245,247,255,0.55);
+  --bihar-a: #ff3d00;
+  --bihar-b: #ffb300;
+  --bengal-a:#00ffd0;
+  --bengal-b:#2962ff;
+  --pop:     #ff2da0;
+}
+
+body.vibes {
+  --bg:      #fff5e6;
+  --surface: rgba(255,255,255,0.9);
+  --border:  rgba(0,0,0,0.12);
+  --text:    #140700;
+  --muted:   rgba(20,7,0,0.6);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .5s,color .5s;
+}
+
+/* ── BACKGROUND ── */
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen;animation:blobFloat 20s ease-in-out infinite alternate;}
+.b1{width:700px;height:700px;background:radial-gradient(#ff5722,transparent 70%);top:-200px;left:-200px;opacity:.22;}
+.b2{width:600px;height:600px;background:radial-gradient(#2979ff,transparent 70%);bottom:-150px;right:-150px;opacity:.2;}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1);}100%{transform:translate(50px,70px) scale(1.1);}}
+
+/* ── UI COMPONENTS ── */
+.brand-logo {
+  position:fixed; top:24px; left:24px; z-index:999;
+  padding:8px 18px; border-radius:14px;
+  background:var(--surface); border:1px solid var(--border);
+  backdrop-filter:blur(14px); font-family:'Bebas Neue',sans-serif; letter-spacing:2px;
+}
+
+.theme-toggle { position:fixed; top:24px; right:24px; z-index:999; cursor:pointer; }
+.toggle-pill { display:flex; padding:5px; background:var(--surface); border-radius:999px; border:1px solid var(--border); }
+.toggle-option { width:35px; height:35px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:.3s; }
+.toggle-option.active { background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b)); color:white; }
+
+/* ── MAIN CONTENT ── */
+.main-container {
+  position:relative; z-index:10;
+  max-width:600px; margin:100px auto; padding:20px;
+}
+
+.hero-text { text-align:center; margin-bottom:40px; }
+.hero-text h1 {
+  font-family:'Yatra One',cursive;
+  font-size:50px;
+  background:linear-gradient(to right, var(--bihar-b), var(--bengal-a));
+  background-clip: text;               
+  -webkit-background-clip: text;        
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── CALCULATOR FORM ── */
+.calc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  padding: 40px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+.step-indicator {
+  display: flex; gap: 8px; margin-bottom: 30px;
+}
+.dot { flex: 1; height: 4px; background: var(--border); border-radius: 10px; transition: .4s; }
+.dot.active { background: var(--bihar-b); box-shadow: 0 0 10px var(--bihar-a); }
+
+.question-box h2 {
+  font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 600; margin-bottom: 25px;
+}
+
+.options-grid {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.option-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  border-radius: 16px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 15px;
+  transition: all .2s;
+}
+
+.option-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--muted);
+  transform: translateX(5px);
+}
+
+.option-btn.selected {
+  background: linear-gradient(90deg, rgba(255,179,0,0.2), transparent);
+  border-color: var(--bihar-b);
+  color: var(--bihar-b);
+  font-weight: 600;
+}
+
+.nav-buttons {
+  margin-top: 35px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-main {
+  padding: 14px 30px;
+  border-radius: 14px;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn-prev { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-next { background: linear-gradient(135deg, var(--bihar-a), var(--bihar-b)); color: white; box-shadow: 0 10px 20px rgba(255,61,0,0.3); }
+.btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-calculate {
+  width: 100%;
+  background: linear-gradient(135deg, #00ffd0, #2962ff);
+  color: white;
+  margin-top: 20px;
+  font-size: 24px;
+  display: none; /* Shown at end */
+}
+
+/* ── FLOATING BACK BUTTON ── */
+.back-float{
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  z-index:999;
+
+  padding:12px 24px;
+  border-radius:999px;
+  border:1px solid var(--border);
+
+  font-family:'Sora',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+
+  color:var(--text);
+  background:var(--surface);
+  backdrop-filter:blur(12px);
+
+  cursor:pointer;
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.back-float:hover{
+  transform:translateY(-4px) scale(1.05);
+  border-color:var(--bihar-b);
+  box-shadow:
+    0 18px 45px rgba(255,87,34,.35),
+    0 6px 16px rgba(0,0,0,.35);
+}
+
+/* light mode polish */
+body.vibes .back-float{
+  background:rgba(255,255,255,0.85);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+</style>
+</head>
+<body>
+
+<div class="brand-logo"><span style="color:var(--bihar-b)">RANJIT</span></div>
+
+<div class="bg-wrap"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<div class="theme-toggle" onclick="toggleTheme()">
+  <div class="toggle-pill">
+    <div class="toggle-option active" id="darkOpt">🌙</div>
+    <div class="toggle-option" id="lightOpt">🌞</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="hero-text">
+    <span style="font-family:'Caveat'; color:var(--pop); font-size: 20px;">Check your market value 😂</span>
+    <h1>Bengali Babu</h1>
+  </div>
+
+  <div class="calc-card">
+    <div class="step-indicator" id="stepIndicator">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <div id="quiz-container">
+      <div class="question-box">
+        <h2 id="question-text">1. How much property do you own?</h2>
+        <div class="options-grid" id="options-grid">
+          </div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-main btn-prev" id="prevBtn" onclick="changeStep(-1)" style="visibility:hidden">Back</button>
+      <button class="btn-main btn-next" id="nextBtn" onclick="changeStep(1)" disabled>Next Step</button>
+    </div>
+    
+    <button class="btn-main btn-calculate" id="calcBtn" onclick="calculateResult()">submit</button>
+  </div>
+</div>
+
+<!-- ══ FLOATING BACK BUTTON ══ -->
+<button class="back-float" onclick="goBack()">Back</button>
+
+<script>
+const quizData = [
+  {
+    q: "How much property do you own?",
+    options: ["Ancestral Land (Zameen)", "City Apartment", "Farmhouse", "Business/Shop", "Zero (Self-made Hero)"]
+  },
+  {
+    q: "What is your Father's occupation?",
+    options: ["Govt Officer / VIP", "Business Owner", "Farmer / Worker", "Retired Legend"]
+  },
+  {
+    q: "What are you doing right now?",
+    options: ["Govt Job (Target No. 1)", "Private Sector / IT", "Student / Preparing", "Unemployed / Vibes"]
+  },
+  {
+    q: "How do you rate your looks?",
+    options: ["Hero Material", "Decent / Simple", "Photoshop User", "Personality is everything"]
+  },
+  {
+    q: "Family Members Count?",
+    options: ["Small (4-5 members)", "Big Joint Family", "Only Child", "Football Team"]
+  }
+];
+
+let currentStep = 0;
+let selections = new Array(quizData.length).fill(null);
+
+function loadQuestion() {
+  const data = quizData[currentStep];
+  document.getElementById('question-text').innerText = `${currentStep + 1}. ${data.q}`;
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+
+  data.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `option-btn ${selections[currentStep] === idx ? 'selected' : ''}`;
+    btn.innerText = opt;
+    btn.onclick = () => selectOption(idx);
+    grid.appendChild(btn);
+  });
+
+  // Update dots
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((dot, i) => {
+    dot.className = i <= currentStep ? 'dot active' : 'dot';
+  });
+
+  // Toggle buttons
+  document.getElementById('prevBtn').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+  
+  if (currentStep === quizData.length - 1) {
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('calcBtn').style.display = 'block';
+  } else {
+    document.getElementById('nextBtn').style.display = 'block';
+    document.getElementById('calcBtn').style.display = 'none';
+  }
+  
+  checkNextButton();
+}
+
+function selectOption(idx) {
+  selections[currentStep] = idx;
+  loadQuestion();
+}
+
+function checkNextButton() {
+  document.getElementById('nextBtn').disabled = selections[currentStep] === null;
+  document.getElementById('calcBtn').disabled = selections[currentStep] === null;
+}
+
+function changeStep(dir) {
+  // prevent stepping before the first question or past the last one
+  const next = currentStep + dir;
+  if (next < 0 || next >= quizData.length) return;
+  currentStep = next;
+  loadQuestion();
+}
+
+function calculateResult() {
+  alert("Calculation complete! Based on Bihar & Bengal standards, you are worth approximately 25 Lakhs + 1 Scorpio. 😂 (Just kidding!)");
+}
+
+function toggleTheme(){
+  const v = document.body.classList.toggle('vibes');
+  document.getElementById('darkOpt').classList.toggle('active',!v);
+  document.getElementById('lightOpt').classList.toggle('active',v);
+}
+function calculateResult() {
+  // (optional) save selections here if needed
+  localStorage.setItem('dhajeeSelections', JSON.stringify(selections));
+
+  // go to result page
+  window.location.href = "result.html";
+}
+
+// Initial load
+loadQuestion();
+
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
